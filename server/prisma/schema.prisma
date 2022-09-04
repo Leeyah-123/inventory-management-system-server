@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                           String @id @default(dbgenerated("uuid_generate_v4()")) @db.VarChar
+  firstName                    String @map("first_name") @db.VarChar(20)
+  lastName                     String @map("last_name") @db.VarChar(20)
+  email                        String @unique @db.VarChar(255)
+  phoneNumber                  String @map("phone_number") @db.VarChar(11)
+  password                     String @db.VarChar(500)
+  role                         roles  @default(user)
+  Sales_Sales_biller_idToUsers Sale[] @relation("Sales_biller_idToUsers")
+  Sales                        Sale[] @relation("SalesToUsers")
+
+  @@map("Users")
+}
+
+model Category {
+  id           Int       @id @default(autoincrement())
+  categoryName String    @unique @map("category_name") @db.VarChar(255)
+  Products     Product[]
+
+  @@map("Categories")
+}
+
+model Product {
+  code        String   @id @db.VarChar(255)
+  title       String   @db.VarChar(255)
+  description String?  @db.VarChar(300)
+  category    String   @db.VarChar(255)
+  price       Float
+  brandName   String?  @map("brand_name") @db.VarChar(100)
+  costPrice   Decimal  @map("cost_price") @db.Money
+  quantity    Int
+  purchased   Int?
+  Categories  Category @relation(fields: [category], references: [categoryName], onDelete: NoAction)
+  Sales       Sale[]   @relation("ProductsToSales")
+
+  @@map("Products")
+}
+
+model Purchase {
+  id             Int             @id @default(autoincrement())
+  refNo          String          @unique @map("ref_no") @db.VarChar(100)
+  supplierId     Int             @map("supplier_id")
+  description    String          @db.VarChar(200)
+  purchaseStatus purchase_status @default(pending) @map("purchase_status")
+  total          Float
+  paid           Float
+  balance        Float?          @default(dbgenerated("(total - paid)"))
+  paymentStatus  statuses        @default(pending) @map("payment_status")
+  purchaseDate   DateTime        @default(dbgenerated("CURRENT_DATE")) @map("purchase_date") @db.Date
+  Suppliers      Supplier        @relation(fields: [supplierId], references: [id], onDelete: NoAction)
+
+  @@map("Purchases")
+}
+
+model Sale {
+  id                           Int      @id @default(autoincrement())
+  customerId                   String   @map("customer_id") @db.VarChar(255)
+  productCode                  String   @map("product_code") @db.VarChar(255)
+  quantity                     Int
+  total                        Float    @default(dbgenerated("(paid - tax)"))
+  paid                         Float
+  balance                      Float?
+  salesDate                    DateTime @default(dbgenerated("CURRENT_DATE")) @map("sales_date") @db.Date
+  status                       statuses
+  billerId                     String   @map("biller_id") @db.VarChar(255)
+  tax                          Float
+  Users_Sales_biller_idToUsers User     @relation("Sales_biller_idToUsers", fields: [billerId], references: [id], onDelete: SetNull)
+  Users                        User     @relation("SalesToUsers", fields: [customerId], references: [id], onDelete: SetNull)
+  Products                     Product  @relation("ProductsToSales", fields: [productCode], references: [code], onDelete: NoAction)
+
+  @@map("Sales")
+}
+
+model Supplier {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(200)
+  phoneNumber String     @map("phone_number") @db.VarChar(11)
+  email       String     @unique @db.VarChar(255)
+  address     String?    @db.VarChar(500)
+  city        String     @db.VarChar(255)
+  state       String     @db.VarChar(255)
+  country     String     @db.VarChar(255)
+  Purchases   Purchase[]
+
+  @@map("Suppliers")
+}
+
+enum roles {
+  user
+  employee
+  admin
+}
+
+enum statuses {
+  paid
+  pending
+}
+
+enum purchase_status {
+  pending
+  received
+}
