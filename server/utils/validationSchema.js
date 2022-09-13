@@ -10,7 +10,9 @@ const schemas = {
         tlds: { allow: ['com', 'net'] },
       })
       .required(),
-    phoneNumber: Joi.number().required(),
+    phoneNumber: Joi.string()
+      .pattern(new RegExp('[0-1]{1}[7-9]{1}[0-1]{1}[0-9]{8}'))
+      .required(),
     password: Joi.string()
       .pattern(
         new RegExp(

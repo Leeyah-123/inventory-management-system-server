@@ -10,12 +10,12 @@ const {
 
 const router = express.Router();
 
-const { employee, admin } = require('../middleware/roleBasedAuthorization');
+const { admin } = require('../middleware/roleBasedAuthorization');
 const validate = require('../middleware/validation');
 const validationSchema = require('../utils/validationSchema');
 
-router.get('/api/suppliers', employee, getSuppliers);
-router.get('/api/suppliers/:id', employee, getSupplierById);
+router.get('/api/suppliers', getSuppliers);
+router.get('/api/suppliers/:id', getSupplierById);
 router.post(
   '/api/suppliers',
   admin,

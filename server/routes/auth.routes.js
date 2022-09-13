@@ -12,7 +12,11 @@ const validationSchema = require('../utils/validationSchema');
 
 const router = express.Router();
 
-router.post('/api/auth/login', loginController);
+router.post(
+  '/api/auth/login',
+  validate(validationSchema.login, 'body'),
+  loginController
+);
 router.post(
   '/api/auth/signup',
   validate(validationSchema.user, 'body'),

@@ -8,7 +8,6 @@ const {
   deleteCategoryById,
 } = require('../controllers/categories.controller');
 
-const { employee } = require('../middleware/roleBasedAuthorization');
 const validate = require('../middleware/validation');
 const validationSchema = require('../utils/validationSchema');
 
@@ -18,14 +17,12 @@ router.get('/api/categories', getAllCategories);
 router.get('/api/categories/:id', getCategoryById);
 router.post(
   '/api/categories',
-  employee,
   validate(validationSchema.category),
   addCategory
 );
-router.patch('/api/categories/:id', employee, updateCategoryById);
+router.patch('/api/categories/:id', updateCategoryById);
 router.delete(
   '/api/categories/:id',
-  employee,
   validate(validationSchema.category),
   deleteCategoryById
 );

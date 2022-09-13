@@ -2,6 +2,9 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+const upload = require('multer');
+const cloudinary = require('cloudinary');
+
 const getAllProducts = async (req, res) => {
   try {
     const products = await prisma.product.findMany();
@@ -32,6 +35,8 @@ const getProductByCode = async (req, res) => {
 const addProduct = async (req, res) => {
   const data = req.body;
   const code = data.code;
+  data.productImg =
+    'https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg';
 
   try {
     const productExists = await prisma.product.findUnique({
@@ -50,6 +55,46 @@ const addProduct = async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: 'An error occurred' });
   }
+};
+
+const uploadProductImage = async (req, res) => {
+  try {
+    const uploader = async (path) => await cloudinary.uploads(path, 'Uploads');
+
+    const file = req.file;
+
+    const { path } = file;
+    const newPath = await uploader(path);
+
+    const url = newPath;
+
+    const product = await prisma.product.update({
+      where: {
+        code: data.code,
+      },
+      data: {
+        productImg: url,
+      },
+    });
+
+    res
+      .status(200)
+      .json({ message: 'Image uploaded successfully', data: product });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: 'An error occurred' });
+  }
+};
+
+const updateProductImage = async (req, res) => {
+  const code = req.params.id;
+  const file = req.file;
+
+  const uploader = async (path) => await cloudinary.uploads(path, 'Uploads');
+  const formerUrl = req.formerUrl;
+
+  const { path } = file;
+  const newPath = await uploader(path);
 };
 
 const updateProductByCode = async (req, res) => {
@@ -101,6 +146,8 @@ module.exports = {
   getAllProducts,
   getProductByCode,
   addProduct,
+  uploadProductImage,
+  updateProductImage,
   updateProductByCode,
   deleteProductByCode,
 };

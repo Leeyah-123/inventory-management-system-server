@@ -8,15 +8,13 @@ datasource db {
 }
 
 model User {
-  id                           String @id @default(dbgenerated("uuid_generate_v4()")) @db.VarChar
-  firstName                    String @map("first_name") @db.VarChar(20)
-  lastName                     String @map("last_name") @db.VarChar(20)
-  email                        String @unique @db.VarChar(255)
-  phoneNumber                  String @map("phone_number") @db.VarChar(11)
-  password                     String @db.VarChar(500)
-  role                         roles  @default(user)
-  Sales_Sales_biller_idToUsers Sale[] @relation("Sales_biller_idToUsers")
-  Sales                        Sale[] @relation("SalesToUsers")
+  id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.VarChar
+  firstName   String @map("first_name") @db.VarChar(20)
+  lastName    String @map("last_name") @db.VarChar(20)
+  email       String @unique @db.VarChar(255)
+  phoneNumber String @map("phone_number") @db.VarChar(11)
+  password    String @db.VarChar(500)
+  role        roles  @default(employee)
 
   @@map("Users")
 }
@@ -39,6 +37,7 @@ model Product {
   costPrice   Decimal  @map("cost_price") @db.Money
   quantity    Int
   purchased   Int?
+  productImg String?  @map("product_img") @db.VarChar(255)
   Categories  Category @relation(fields: [category], references: [categoryName], onDelete: NoAction)
   Sales       Sale[]   @relation("ProductsToSales")
 
@@ -62,20 +61,18 @@ model Purchase {
 }
 
 model Sale {
-  id                           Int      @id @default(autoincrement())
-  customerId                   String   @map("customer_id") @db.VarChar(255)
-  productCode                  String   @map("product_code") @db.VarChar(255)
-  quantity                     Int
-  total                        Float    @default(dbgenerated("(paid - tax)"))
-  paid                         Float
-  balance                      Float?
-  salesDate                    DateTime @default(dbgenerated("CURRENT_DATE")) @map("sales_date") @db.Date
-  status                       statuses
-  billerId                     String   @map("biller_id") @db.VarChar(255)
-  tax                          Float
-  Users_Sales_biller_idToUsers User     @relation("Sales_biller_idToUsers", fields: [billerId], references: [id], onDelete: SetNull)
-  Users                        User     @relation("SalesToUsers", fields: [customerId], references: [id], onDelete: SetNull)
-  Products                     Product  @relation("ProductsToSales", fields: [productCode], references: [code], onDelete: NoAction)
+  id          Int      @id @default(autoincrement())
+  customerId  String   @map("customer_id") @db.VarChar(255)
+  productCode String   @map("product_code") @db.VarChar(255)
+  quantity    Int
+  total       Float    @default(dbgenerated("(paid - tax)"))
+  paid        Float
+  balance     Float?
+  salesDate   DateTime @default(dbgenerated("CURRENT_DATE")) @map("sales_date") @db.Date
+  status      statuses
+  billerId    String   @map("biller_id") @db.VarChar(255)
+  tax         Float
+  Products    Product  @relation("ProductsToSales", fields: [productCode], references: [code], onDelete: NoAction)
 
   @@map("Sales")
 }
@@ -95,7 +92,6 @@ model Supplier {
 }
 
 enum roles {
-  user
   employee
   admin
 }

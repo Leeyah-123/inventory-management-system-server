@@ -2,6 +2,7 @@ const createError = require('http-errors');
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 // router imports
 const authRouter = require('./routes/auth.routes');
@@ -22,8 +23,8 @@ var app = express();
 
 // middlewares
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: ['http://localhost:3000'],

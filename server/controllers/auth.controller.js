@@ -33,7 +33,9 @@ const signupController = async (req, res) => {
 
   const email = data.email;
   const password = data.password;
+
   delete data.role;
+  delete data.confirmPassword;
 
   const userExists = await prisma.user.findUnique({
     where: { email },

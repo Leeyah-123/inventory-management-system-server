@@ -4,30 +4,32 @@ const {
   getAllProducts,
   getProductByCode,
   addProduct,
+  uploadProductImage,
   updateProductByCode,
+  updateProductImage,
   deleteProductByCode,
 } = require('../controllers/products.controller');
 
-const { employee } = require('../middleware/roleBasedAuthorization');
 const validate = require('../middleware/validation');
 const validationSchema = require('../utils/validationSchema');
+const upload = require('../utils/multer');
 
 const router = express.Router();
 
 router.get('/api/products', getAllProducts);
 router.get('/api/products/:id', getProductByCode);
-router.post(
-  '/api/products',
-  employee,
-  validate(validationSchema.product),
-  addProduct
-);
+router.post('/api/products', validate(validationSchema.product), addProduct);
 router.patch(
   '/api/products/:id',
-  employee,
   validate(validationSchema.product),
   updateProductByCode
 );
-router.delete('/api/products/:id', employee, deleteProductByCode);
+router.post('/api/products/image', upload.single('image'), uploadProductImage);
+router.patch(
+  '/api/products/image/:id',
+  upload.single('image'),
+  updateProductImage
+);
+router.delete('/api/products/:id', deleteProductByCode);
 
 module.exports = router;
