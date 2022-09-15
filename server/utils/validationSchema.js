@@ -23,6 +23,22 @@ const schemas = {
       .required(),
     confirmPassword: Joi.ref('password'),
   }),
+  login: Joi.object().keys({
+    email: Joi.string()
+      .email({
+        minDomainSegments: 2,
+        tlds: { allow: ['com', 'net'] },
+      })
+      .required(),
+    password: Joi.string()
+      .pattern(
+        new RegExp(
+          '^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))'
+        )
+      )
+      .min(5)
+      .required(),
+  }),
   category: Joi.object().keys({
     categoryName: Joi.string().min(3).required(),
   }),

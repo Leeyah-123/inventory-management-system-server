@@ -1,4 +1,4 @@
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 
 require('dotenv').config();
 
@@ -12,9 +12,10 @@ exports.uploads = (file, folder) => {
   return new Promise((resolve) => {
     cloudinary.uploader.upload(
       file,
-      (result) => {
+      { use_filename: true },
+      (error, result) => {
         resolve({
-          url: result.url,
+          url: result.secure_url,
           id: result.public_id,
         });
       },
@@ -24,4 +25,8 @@ exports.uploads = (file, folder) => {
       }
     );
   });
+};
+
+exports.destroy = (public_id) => {
+  return cloudinary.uploader.destroy(public_id, (resource_type = 'audio'));
 };

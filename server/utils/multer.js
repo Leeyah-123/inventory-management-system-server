@@ -18,6 +18,8 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// const storage = multer.memoryStorage();
+
 const upload = multer({
   storage: storage,
   // file must be less than or equal to 1mb in size

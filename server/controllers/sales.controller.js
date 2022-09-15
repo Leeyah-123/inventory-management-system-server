@@ -71,6 +71,14 @@ const makeSale = async (req, res) => {
     // setting the balance
     data.balance = balance;
 
+    data.paid = parseFloat(paid);
+    data.quantity = parseFloat(quantity);
+    data.tax = parseFloat(tax);
+
+    // setting payment status
+    if (balance === 0) data.status = 'paid';
+    else data.status = 'pending';
+
     // committing the sale
     const sale = await prisma.sale.create({
       data,
@@ -99,6 +107,7 @@ const updateSaleById = async (req, res) => {
   const paid = data.paid;
   const quantity = data.quantity;
   const code = data.productCode;
+  const tax = data.tax;
 
   delete data.id;
 
@@ -130,6 +139,13 @@ const updateSaleById = async (req, res) => {
 
       // setting the balance
       data.balance = balance;
+
+      data.paid = parseFloat(paid);
+      data.quantity = parseFloat(quantity);
+      data.tax = parseFloat(tax);
+
+      if (balance === 0) data.status = 'paid';
+      else data.status = 'pending';
     }
 
     const sale = await prisma.sale.update({

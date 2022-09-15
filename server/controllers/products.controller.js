@@ -1,9 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
 
 const prisma = new PrismaClient();
 
-const upload = require('multer');
-const cloudinary = require('cloudinary');
+const cloudinary = require('../utils/cloudinary');
 
 const getAllProducts = async (req, res) => {
   try {
@@ -35,8 +35,9 @@ const getProductByCode = async (req, res) => {
 const addProduct = async (req, res) => {
   const data = req.body;
   const code = data.code;
-  data.productImg =
-    'https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg';
+  if (data.productImg === '')
+    data.productImg =
+      'https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg';
 
   try {
     const productExists = await prisma.product.findUnique({
@@ -48,11 +49,16 @@ const addProduct = async (req, res) => {
     if (productExists)
       return res.status(400).json({ message: 'Product code already exists' });
 
+    data.price = parseInt(data.price);
+    data.costPrice = parseInt(data.costPrice);
+    data.quantity = parseInt(data.quantity);
+
     const product = await prisma.product.create({
       data,
     });
     res.status(200).json(product);
   } catch (err) {
+    console.log(err);
     res.status(400).json({ message: 'An error occurred' });
   }
 };
@@ -64,22 +70,12 @@ const uploadProductImage = async (req, res) => {
     const file = req.file;
 
     const { path } = file;
-    const newPath = await uploader(path);
+    const response = await uploader(path);
+    fs.unlinkSync(path);
 
-    const url = newPath;
-
-    const product = await prisma.product.update({
-      where: {
-        code: data.code,
-      },
-      data: {
-        productImg: url,
-      },
-    });
-
-    res
-      .status(200)
-      .json({ message: 'Image uploaded successfully', data: product });
+    if (!response.url)
+      return res.status(400).json({ message: 'Upload unsuccessful' });
+    res.status(200).json(response);
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: 'An error occurred' });
@@ -88,13 +84,45 @@ const uploadProductImage = async (req, res) => {
 
 const updateProductImage = async (req, res) => {
   const code = req.params.id;
-  const file = req.file;
 
-  const uploader = async (path) => await cloudinary.uploads(path, 'Uploads');
-  const formerUrl = req.formerUrl;
+  try {
+    const product = await prisma.product.findUnique({
+      where: {
+        code,
+      },
+      select: {
+        productImageId: true,
+      },
+    });
 
-  const { path } = file;
-  const newPath = await uploader(path);
+    let response;
+    const public_id = product.productImageId;
+    if (
+      public_id !==
+      'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym'
+    ) {
+      response = await cloudinary.destroy(public_id);
+    }
+
+    if (response.result === 'ok') {
+      const uploader = async (path) =>
+        await cloudinary.uploads(path, 'Uploads');
+
+      const file = req.file;
+
+      const { path } = file;
+      const response = await uploader(path);
+      fs.unlinkSync(path);
+      if (!response.url)
+        return res.status(400).json({ message: 'Upload unsuccessful' });
+      res.status(200).json(response);
+    } else {
+      console.log(response);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: 'An error occurred' });
+  }
 };
 
 const updateProductByCode = async (req, res) => {
@@ -104,6 +132,10 @@ const updateProductByCode = async (req, res) => {
   delete data.code;
 
   try {
+    data.price = parseInt(data.price);
+    data.costPrice = parseInt(data.costPrice);
+    data.quantity = parseInt(data.quantity);
+
     const product = await prisma.product.update({
       where: {
         code,
@@ -123,6 +155,28 @@ const deleteProductByCode = async (req, res) => {
   const code = req.params.id;
 
   try {
+    const savedProduct = await prisma.product.findUnique({
+      where: {
+        code,
+      },
+      select: {
+        productImageId: true,
+      },
+    });
+
+    let response;
+    const public_id = savedProduct.productImageId;
+    if (
+      public_id !==
+      'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym'
+    ) {
+      response = await cloudinary.destroy(public_id);
+    }
+
+    if (response.result !== 'ok') {
+      return res.status(400).json({ message: 'Product Image delete failed' });
+    }
+
     const product = await prisma.product.delete({
       where: {
         code,

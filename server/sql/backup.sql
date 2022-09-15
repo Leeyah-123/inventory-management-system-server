@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS public."Products" (
     cost_price money NOT NULL,
     quantity int NOT NULL,
     purchased int,
-    product_img varchar(255)
+    product_img varchar(255),
+    product_image_id varchar(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS public."Categories" (
@@ -28,7 +29,7 @@ CREATE TABLE IF NOT EXISTS public."Categories" (
 
 CREATE TABLE IF NOT EXISTS public."Sales" (
     id SERIAL PRIMARY KEY NOT NULL,
-    customer_id varchar(255) NOT NULL references "Users"(id) ON UPDATE CASCADE ON DELETE SET NULL,
+    customer_name varchar(200) NOT NULL,
     product_code varchar(255) NOT NULL references "Products"(code) ON UPDATE CASCADE,
     quantity int NOT NULL,
     total double precision NOT NULL GENERATED ALWAYS AS (paid - tax) STORED,

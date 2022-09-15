@@ -28,18 +28,19 @@ model Category {
 }
 
 model Product {
-  code        String   @id @db.VarChar(255)
-  title       String   @db.VarChar(255)
-  description String?  @db.VarChar(300)
-  category    String   @db.VarChar(255)
-  price       Float
-  brandName   String?  @map("brand_name") @db.VarChar(100)
-  costPrice   Decimal  @map("cost_price") @db.Money
-  quantity    Int
-  purchased   Int?
-  productImg String?  @map("product_img") @db.VarChar(255)
-  Categories  Category @relation(fields: [category], references: [categoryName], onDelete: NoAction)
-  Sales       Sale[]   @relation("ProductsToSales")
+  code           String   @id @db.VarChar(255)
+  title          String   @db.VarChar(255)
+  description    String?  @db.VarChar(300)
+  category       String   @db.VarChar(255)
+  price          Float
+  brandName      String?  @map("brand_name") @db.VarChar(100)
+  costPrice      Decimal  @map("cost_price") @db.Money
+  quantity       Int
+  purchased      Int?
+  productImg     String?  @map("product_img") @db.VarChar(255)
+  productImageId String   @map("product_image_id") @db.VarChar(255)
+  Categories     Category @relation(fields: [category], references: [categoryName], onDelete: NoAction)
+  Sales          Sale[]   @relation("ProductsToSales")
 
   @@map("Products")
 }
@@ -61,18 +62,18 @@ model Purchase {
 }
 
 model Sale {
-  id          Int      @id @default(autoincrement())
-  customerId  String   @map("customer_id") @db.VarChar(255)
-  productCode String   @map("product_code") @db.VarChar(255)
-  quantity    Int
-  total       Float    @default(dbgenerated("(paid - tax)"))
-  paid        Float
-  balance     Float?
-  salesDate   DateTime @default(dbgenerated("CURRENT_DATE")) @map("sales_date") @db.Date
-  status      statuses
-  billerId    String   @map("biller_id") @db.VarChar(255)
-  tax         Float
-  Products    Product  @relation("ProductsToSales", fields: [productCode], references: [code], onDelete: NoAction)
+  id            Int      @id @default(autoincrement())
+  productCode   String   @map("product_code") @db.VarChar(255)
+  quantity      Int
+  total         Float    @default(dbgenerated("(paid - tax)"))
+  paid          Float
+  balance       Float?
+  salesDate     DateTime @default(dbgenerated("CURRENT_DATE")) @map("sales_date") @db.Date
+  status        statuses
+  billerId      String   @map("biller_id") @db.VarChar(255)
+  tax           Float
+  customerName String   @map("customer_name") @db.VarChar(200)
+  Products      Product  @relation("ProductsToSales", fields: [productCode], references: [code], onDelete: NoAction)
 
   @@map("Sales")
 }
