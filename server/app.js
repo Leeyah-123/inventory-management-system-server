@@ -26,9 +26,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
-  cors({
-    origin: ['http://localhost:3000'],
-  })
+  cors()
 );
 
 // routers
@@ -58,7 +56,8 @@ app.use(function (err, req, res, next) {
 
 // setting up server port
 const port = process.env.PORT || 5000;
+const host = process.env.HOST || '0.0.0.0';
 
-app.listen(port, () => {
+app.listen(port, host, () => {
   console.log('Server started successfully');
 });
