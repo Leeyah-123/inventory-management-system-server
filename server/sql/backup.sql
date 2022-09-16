@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS public."Users" (
     email varchar(255) UNIQUE NOT NULL,
     phone_number varchar(11) NOT NULL,
     password varchar (500) NOT NULL,
-    role roles NOT NULL DEFAULT ('employee')
+    role roles NOT NULL DEFAULT ('employee'),
+    "profileImage" varchar(255) NOT NULL,
+    "profileImageId" varchar(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS public."Products" (

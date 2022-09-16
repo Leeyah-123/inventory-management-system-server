@@ -47,6 +47,10 @@ const signupController = async (req, res) => {
   const hashedPassword = await hashPassword(password);
   data.password = hashedPassword;
 
+  data.profileImage =
+    'https://res.cloudinary.com/leeyah/image/upload/v1663241604/uploads/blank-profile-picture-973460_640_m0rode.png';
+  data.profileImageId = 'uploads/blank-profile-picture-973460_640_m0rode';
+
   const user = await prisma.user.create({
     data,
   });

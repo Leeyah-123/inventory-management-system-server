@@ -87,6 +87,25 @@ const schemas = {
     state: Joi.string().min(3).required(),
     country: Joi.string().min(3).required(),
   }),
+  profile: Joi.object().keys({
+    firstName: Joi.string().min(3),
+    lastName: Joi.string().min(3),
+    email: Joi.string().email({
+      minDomainSegments: 2,
+      tlds: { allow: ['com', 'net'] },
+    }),
+    phoneNumber: Joi.string().pattern(
+      new RegExp('[0-1]{1}[7-9]{1}[0-1]{1}[0-9]{8}')
+    ),
+    password: Joi.string()
+      .pattern(
+        new RegExp(
+          '^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))'
+        )
+      )
+      .min(5),
+    confirmPassword: Joi.ref('password'),
+  }),
 };
 
 module.exports = schemas;

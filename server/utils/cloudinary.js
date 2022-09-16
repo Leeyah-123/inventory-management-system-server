@@ -12,21 +12,18 @@ exports.uploads = (file, folder) => {
   return new Promise((resolve) => {
     cloudinary.uploader.upload(
       file,
-      { use_filename: true },
+      { use_filename: true, resource_type: 'auto', folder: folder },
       (error, result) => {
         resolve({
           url: result.secure_url,
           id: result.public_id,
         });
       },
-      {
-        resource_type: 'auto',
-        folder: folder,
-      }
+      {}
     );
   });
 };
 
 exports.destroy = (public_id) => {
-  return cloudinary.uploader.destroy(public_id, (resource_type = 'audio'));
+  return cloudinary.uploader.destroy(public_id, { resource_type: 'image' });
 };
