@@ -26,7 +26,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
-  cors()
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000/',
+  })
 );
 
 // routers
