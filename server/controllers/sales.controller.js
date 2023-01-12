@@ -74,6 +74,7 @@ const makeSale = async (req, res) => {
     data.paid = parseFloat(paid);
     data.quantity = parseFloat(quantity);
     data.tax = parseFloat(tax);
+    data.total = paid - tax;
 
     // setting payment status
     if (balance === 0) data.status = 'paid';
@@ -143,6 +144,7 @@ const updateSaleById = async (req, res) => {
       data.paid = parseFloat(paid);
       data.quantity = parseFloat(quantity);
       data.tax = parseFloat(tax);
+      data.total = paid - tax;
 
       if (balance === 0) data.status = 'paid';
       else data.status = 'pending';

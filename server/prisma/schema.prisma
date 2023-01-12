@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id             String  @id @default(uuid()) @db.VarChar
+  id             String  @id @default(cuid()) @db.VarChar
   firstName      String  @map("first_name") @db.VarChar(20)
   lastName       String  @map("last_name") @db.VarChar(20)
   email          String  @unique @db.VarChar(255)
@@ -39,8 +39,8 @@ model Product {
   costPrice      Decimal  @map("cost_price") @db.Money
   quantity       Int
   purchased      Int?
-  productImg     String?  @map("product_img") @db.VarChar(255)
-  productImageId String   @map("product_image_id") @db.VarChar(255)
+  productImg     String?  @default("https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg") @map("product_img") @db.VarChar(255)
+  productImageId String?  @map("product_image_id") @db.VarChar(255)
   Categories     Category @relation(fields: [category], references: [categoryName], onDelete: NoAction)
   Sales          Sale[]   @relation("ProductsToSales")
 
@@ -55,9 +55,9 @@ model Purchase {
   purchaseStatus purchase_status @default(pending) @map("purchase_status")
   total          Float
   paid           Float
-  balance        Float?          @default(dbgenerated("(total - paid)"))
+  balance        Float?
   paymentStatus  statuses        @default(pending) @map("payment_status")
-  purchaseDate   DateTime        @default(dbgenerated("CURRENT_DATE")) @map("purchase_date") @db.Date
+  purchaseDate   DateTime        @default(now()) @map("purchase_date") @db.Date
   Suppliers      Supplier        @relation(fields: [supplierId], references: [id], onDelete: NoAction)
 
   @@map("Purchases")
@@ -67,10 +67,10 @@ model Sale {
   id           Int      @id @default(autoincrement())
   productCode  String   @map("product_code") @db.VarChar(255)
   quantity     Int
-  total        Float    @default(dbgenerated("(paid - tax)"))
+  total        Float
   paid         Float
   balance      Float?
-  salesDate    DateTime @default(dbgenerated("CURRENT_DATE")) @map("sales_date") @db.Date
+  salesDate    DateTime @default(now()) @map("sales_date") @db.Date
   status       statuses
   billerId     String   @map("biller_id") @db.VarChar(255)
   tax          Float

@@ -62,6 +62,7 @@ const makePurchase = async (req, res) => {
 
     data.total = total;
     data.paid = paid;
+    data.balance = total - paid;
 
     const purchase = await prisma.purchase.create({
       data,
@@ -93,6 +94,7 @@ const updatePurchaseById = async (req, res) => {
 
     data.total = total;
     data.paid = paid;
+    data.balance = total - paid;
 
     const purchase = await prisma.purchase.update({
       where: {

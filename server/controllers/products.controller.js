@@ -35,9 +35,9 @@ const getProductByCode = async (req, res) => {
 const addProduct = async (req, res) => {
   const data = req.body;
   const code = data.code;
-  if (data.productImg === '')
-    data.productImg =
-      'https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg';
+  // if (data.productImg === '')
+  //   data.productImg =
+  //     'https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg';
 
   try {
     const productExists = await prisma.product.findUnique({
@@ -98,8 +98,10 @@ const updateProductImage = async (req, res) => {
     let response;
     const public_id = product.productImageId;
     if (
+      public_id &&
       public_id !==
-      'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym'
+        'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym' &&
+      public_id !== ''
     ) {
       response = await cloudinary.destroy(public_id);
     }
@@ -167,8 +169,10 @@ const deleteProductByCode = async (req, res) => {
     let response;
     const public_id = savedProduct.productImageId;
     if (
+      public_id &&
+      public_id !== '' &&
       public_id !==
-      'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym'
+        'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym'
     ) {
       response = await cloudinary.destroy(public_id);
     }
