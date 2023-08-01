@@ -41,7 +41,7 @@ model Product {
   purchased      Int?
   productImg     String?  @default("https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg") @map("product_img") @db.VarChar(255)
   productImageId String?  @map("product_image_id") @db.VarChar(255)
-  Categories     Category @relation(fields: [category], references: [categoryName], onDelete: NoAction)
+  Categories     Category @relation(fields: [category], references: [categoryName])
   Sales          Sale[]   @relation("ProductsToSales")
 
   @@map("Products")
