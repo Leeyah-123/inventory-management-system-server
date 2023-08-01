@@ -41,7 +41,7 @@ model Product {
   purchased      Int?
   productImg     String?  @default("https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg") @map("product_img") @db.VarChar(255)
   productImageId String?  @map("product_image_id") @db.VarChar(255)
-  Categories     Category @relation(fields: [category], references: [categoryName])
+  Categories     Category @relation(fields: [category], references: [categoryName], onDelete: Restrict)
   Sales          Sale[]   @relation("ProductsToSales")
 
   @@map("Products")
@@ -58,7 +58,7 @@ model Purchase {
   balance        Float?
   paymentStatus  statuses        @default(pending) @map("payment_status")
   purchaseDate   DateTime        @default(now()) @map("purchase_date") @db.Date
-  Suppliers      Supplier        @relation(fields: [supplierId], references: [id], onDelete: NoAction)
+  Suppliers      Supplier        @relation(fields: [supplierId], references: [id], onDelete: Restrict)
 
   @@map("Purchases")
 }
@@ -75,7 +75,7 @@ model Sale {
   billerId     String   @map("biller_id") @db.VarChar(255)
   tax          Float
   customerName String   @map("customer_name") @db.VarChar(200)
-  Products     Product  @relation("ProductsToSales", fields: [productCode], references: [code], onDelete: NoAction)
+  Products     Product  @relation("ProductsToSales", fields: [productCode], references: [code], onDelete: Restrict)
 
   @@map("Sales")
 }

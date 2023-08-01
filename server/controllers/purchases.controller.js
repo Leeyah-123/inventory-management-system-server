@@ -67,7 +67,7 @@ const makePurchase = async (req, res) => {
     const purchase = await prisma.purchase.create({
       data,
     });
-    res.status(200).json(purchase);
+    res.status(201).json(purchase);
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: 'An error occurred' });
@@ -125,7 +125,7 @@ const deletePurchaseById = async (req, res) => {
     if (!purchase)
       return res.status(404).json({ message: 'Purchase Id does not exist' });
 
-    res.status(200).json(purchase);
+    res.status(204).json(purchase);
   } catch (err) {
     res.status(400).json({ message: 'An error occurred' });
   }

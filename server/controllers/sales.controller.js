@@ -96,7 +96,7 @@ const makeSale = async (req, res) => {
       },
     });
 
-    res.status(200).json(sale);
+    res.status(201).json(sale);
   } catch (err) {
     res.status(400).json({ message: 'An error occurred' });
   }
@@ -178,7 +178,7 @@ const deleteSaleById = async (req, res) => {
 
     if (!sale)
       return res.status(404).json({ message: 'Sale Id does not exist' });
-    res.status(200).json(sale);
+    res.status(204).json(sale);
   } catch (err) {
     res.status(400).json({ message: 'An error occurred' });
   }

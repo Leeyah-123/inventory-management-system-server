@@ -45,7 +45,7 @@ const addSupplier = async (req, res) => {
     const supplier = await prisma.supplier.create({
       data,
     });
-    res.status(200).json(supplier);
+    res.status(201).json(supplier);
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: 'An error occurred' });
@@ -99,7 +99,7 @@ const deleteSupplierById = async (req, res) => {
     if (!supplier)
       return res.status(404).json({ message: 'Supplier does not exist' });
 
-    res.status(200).json(supplier);
+    res.status(204).json(supplier);
   } catch (err) {
     if ((JSON.stringify(err).code = 'P2003')) {
       res.status(400).json({

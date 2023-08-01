@@ -17,19 +17,19 @@ const upload = require('../utils/multer');
 const router = express.Router();
 
 router.get('/api/products', getAllProducts);
-router.get('/api/products/:id', getProductByCode);
+router.get('/api/products/:code', getProductByCode);
 router.post('/api/products', validate(validationSchema.product), addProduct);
 router.patch(
-  '/api/products/:id',
+  '/api/products/:code',
   validate(validationSchema.product),
   updateProductByCode
 );
 router.post('/api/products/image', upload.single('image'), uploadProductImage);
 router.patch(
-  '/api/products/image/:id',
+  '/api/products/image/:code',
   upload.single('image'),
   updateProductImage
 );
-router.delete('/api/products/:id', deleteProductByCode);
+router.delete('/api/products/:code', deleteProductByCode);
 
 module.exports = router;

@@ -47,7 +47,7 @@ const addCategory = async (req, res) => {
     const category = await prisma.category.create({
       data,
     });
-    res.status(200).json(category);
+    res.status(201).json(category);
   } catch (err) {
     res.status(400).json({ message: 'An error occurred' });
   }
@@ -97,7 +97,7 @@ const deleteCategoryById = async (req, res) => {
 
     if (!category)
       return res.status(404).json({ message: 'Category does not exist' });
-    res.status(200).json(category);
+    res.status(204).json(category);
   } catch (err) {
     if ((JSON.stringify(err).code = 'P2003')) {
       res.status(400).json({

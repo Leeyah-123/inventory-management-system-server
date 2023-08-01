@@ -1,0 +1,1 @@
+This folder temporarily stores images till they're uploaded to cloudinary

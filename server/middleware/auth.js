@@ -4,7 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 module.exports = async (req, res, next) => {
-  const token = req.header('AUTH_TOKEN');
+  const token = req.header('Authorization');
   if (!token)
     return res
       .status(401)

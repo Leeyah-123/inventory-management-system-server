@@ -15,7 +15,7 @@ const getAllProducts = async (req, res) => {
 };
 
 const getProductByCode = async (req, res) => {
-  const code = req.params.id;
+  const code = req.params.code;
 
   try {
     const product = await prisma.product.findUnique({
@@ -36,8 +36,8 @@ const addProduct = async (req, res) => {
   const data = req.body;
   const code = data.code;
   if (data.productImg === '')
-     data.productImg =
-       'https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg';
+    data.productImg =
+      'https://res.cloudinary.com/leeyah/image/upload/v1663003590/red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym.jpg';
 
   try {
     const productExists = await prisma.product.findUnique({
@@ -56,7 +56,7 @@ const addProduct = async (req, res) => {
     const product = await prisma.product.create({
       data,
     });
-    res.status(200).json(product);
+    res.status(201).json(product);
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: 'An error occurred' });
@@ -83,7 +83,7 @@ const uploadProductImage = async (req, res) => {
 };
 
 const updateProductImage = async (req, res) => {
-  const code = req.params.id;
+  const code = req.params.code;
 
   try {
     const product = await prisma.product.findUnique({
@@ -95,32 +95,27 @@ const updateProductImage = async (req, res) => {
       },
     });
 
-    let response;
     const public_id = product.productImageId;
     if (
       public_id &&
       public_id !==
-        'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym' &&
-      public_id !== ''
+        'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym'
     ) {
-      response = await cloudinary.destroy(public_id);
+      await cloudinary.destroy(public_id);
     }
 
-    if (response.result === 'ok') {
-      const uploader = async (path) =>
-        await cloudinary.uploads(path, 'Uploads');
+    const uploader = async (path) => await cloudinary.uploads(path, 'Uploads');
 
-      const file = req.file;
+    const file = req.file;
+    const { path } = file;
 
-      const { path } = file;
-      const response = await uploader(path);
-      fs.unlinkSync(path);
-      if (!response.url)
-        return res.status(400).json({ message: 'Upload unsuccessful' });
-      res.status(200).json(response);
-    } else {
-      console.log(response);
-    }
+    const uploadResponse = await uploader(path);
+    // delete file from server
+    fs.unlinkSync(path);
+
+    if (!uploadResponse.url)
+      return res.status(400).json({ message: 'Upload unsuccessful' });
+    res.status(200).json(uploadResponse);
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: 'An error occurred' });
@@ -128,7 +123,7 @@ const updateProductImage = async (req, res) => {
 };
 
 const updateProductByCode = async (req, res) => {
-  const code = req.params.id;
+  const code = req.params.code;
   const data = req.body;
 
   delete data.code;
@@ -154,7 +149,7 @@ const updateProductByCode = async (req, res) => {
 };
 
 const deleteProductByCode = async (req, res) => {
-  const code = req.params.id;
+  const code = req.params.code;
 
   try {
     const savedProduct = await prisma.product.findUnique({
@@ -166,7 +161,6 @@ const deleteProductByCode = async (req, res) => {
       },
     });
 
-    let response;
     const public_id = savedProduct.productImageId;
     if (
       public_id &&
@@ -174,11 +168,7 @@ const deleteProductByCode = async (req, res) => {
       public_id !==
         'red-rubber-stamp-icon-on-transparent-background-vector-id918650450_ldqrym'
     ) {
-      response = await cloudinary.destroy(public_id);
-    }
-
-    if (response.result !== 'ok') {
-      return res.status(400).json({ message: 'Product Image delete failed' });
+      await cloudinary.destroy(public_id);
     }
 
     const product = await prisma.product.delete({
@@ -189,12 +179,13 @@ const deleteProductByCode = async (req, res) => {
 
     if (!product)
       return res.status(404).json({ message: 'Product does not exist' });
-    res.status(200).json(product);
+
+    res.status(204).json(product);
   } catch (err) {
     if ((JSON.stringify(err).code = 'P2003')) {
       res.status(400).json({
         message:
-          'Product has been referenced by one or more sales, pleease delete them to continue',
+          'Product has been referenced by one or more sales, please delete them to continue',
       });
     } else res.status(400).json({ message: 'An error occurred' });
   }

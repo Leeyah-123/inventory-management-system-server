@@ -113,8 +113,8 @@ const deleteProfileImage = async (req, res) => {
       response = await cloudinary.destroy(public_id);
       if (!response.result === 'ok')
         return res.status(400).json({ message: response.result });
-      else return res.status(200).json({ message: response.result });
-    } else return res.status(200).json({ message: 'No action performed' });
+      else return res.status(204).json({ message: response.result });
+    } else return res.status(204).json({ message: 'No action performed' });
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: 'An error occurred' });
@@ -152,7 +152,7 @@ const deleteUserById = async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User does not exist' });
 
     delete user.password;
-    res.status(200).json(user);
+    res.status(204).json(user);
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: 'An error occurred' });
@@ -170,7 +170,7 @@ const deleteProfile = async (req, res) => {
     });
 
     delete user.password;
-    res.status(200).json(user);
+    res.status(204).json(user);
   } catch (err) {
     res.status(400).json({ message: 'An error occurred' });
   }
